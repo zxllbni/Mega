@@ -4,4 +4,5 @@
 venv/bin/python3 -m megadl &
 
 # Run the second command for app.py
-python3 app.py
+python3 app.py &
+wait
