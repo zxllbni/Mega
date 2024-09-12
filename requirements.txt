@@ -13,3 +13,4 @@ pycryptodome
 psutil
 humans-formatter
 flask
+gunicorn
