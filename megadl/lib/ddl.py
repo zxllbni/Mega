@@ -16,7 +16,7 @@ from aiofiles import open as async_open
 from ..helpers.pyros import track_progress
 
 
-# pre compled regexes for ddl
+# pre compiled regexes for ddl
 CMP_GD_QUERY = re.compile(
     r"https://drive\.google\.com/file/d/(.*?)/.*?\?usp=(sharing|drive_link)"
 )
@@ -57,11 +57,21 @@ class Downloader:
         # unpack ids
         chat_id, msg_id, user_id = ides
 
+        # Create the download task
         dl_task = asyncio.create_task(
             self.from_ddl(url=url, path=path, chat_id=chat_id, msg_id=msg_id, **kwargs)
         )
-        self.tg_client.ddl_running[user_id] = dl_task
-        return await dl_task
+
+        # Allow multiple tasks per user
+        if user_id not in self.tg_client.ddl_running:
+            self.tg_client.ddl_running[user_id] = []
+        self.tg_client.ddl_running[user_id].append(dl_task)
+
+        # Ensure cleanup after task completion
+        try:
+            return await dl_task
+        finally:
+            self.tg_client.ddl_running[user_id].remove(dl_task)
 
     async def _parse_gdrive(self, url: str):
         return re.sub(
