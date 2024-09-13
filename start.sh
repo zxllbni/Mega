@@ -4,4 +4,4 @@
 python3 -m megadl &
 
 # Start the app using gunicorn
-gunicorn --bind 0.0.0.0:8000 app:app
+python3 app.py
