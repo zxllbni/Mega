@@ -14,4 +14,4 @@ COPY start.sh /app/start.sh
 RUN chmod +x /app/start.sh
 
 # Run the start script
- ["/app/start.sh"]
+CMD ["/app/start.sh"]
